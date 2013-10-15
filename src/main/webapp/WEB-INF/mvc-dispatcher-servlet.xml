@@ -1,30 +1,64 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans     
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
         http://www.springframework.org/schema/context 
-        http://www.springframework.org/schema/context/spring-context-3.0.xsd
-        http://www.springframework.org/schema/util 
-		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+
+
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    	<property name="locations" value="classpath:/app.prop"/>
-	</bean>
+  <context:component-scan base-package="com.outbrain.sample"/>
+  <mvc:annotation-driven/>
+  <context:annotation-config/>
+  <mvc:resources mapping="/resources/**" location="/WEB-INF/resources/"/>
+  <!--<mvc:view-controller path="/register" view-name="help"/>-->
 
-	<context:component-scan base-package="com.outbrain.sample" />
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations" value="classpath:/app.prop"/>
+  </bean>
 
-	<mvc:annotation-driven />
-	<context:annotation-config/>
-	
-	<util:list id="initProcessors" list-class="java.util.ArrayList">
-		<ref bean="jsonProc"/>   
-	</util:list>
-	
+  <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+    <constructor-arg name="mongo" ref="mongo"/>
+    <constructor-arg name="databaseName" value="app11796401"/>
+    <constructor-arg name="userCredentials" ref="mongoCredentials"/>
+  </bean>
+
+  <bean id="mongoCredentials" class="org.springframework.data.authentication.UserCredentials">
+    <constructor-arg value="monitor"/>
+    <constructor-arg value="1234qwer"/>
+  </bean>
+
+  <bean class="com.mongodb.Mongo" id="mongo">
+    <constructor-arg value="paulo.mongohq.com"/>
+    <constructor-arg value="10097"/>
+  </bean>
+
+
+  <!-- Use this post processor to translate any MongoExceptions thrown in @Repository annotated classes -->
+  <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+  <!--<bean class="org.springframework.orm.hibernate4.HibernateExceptionTranslator"/>-->
+  <bean class="org.springframework.orm.hibernate4.HibernateExceptionTranslator"/>
+
+
+  <!-- Twillio-->
+  <bean id="twillioClient" class="com.twilio.sdk.TwilioRestClient">
+    <constructor-arg value="ACdedb17251facba1fda7435191fcae504"/>
+    <constructor-arg value="9aa1f42139d8c1099ed4bae8109dc1e5"/>
+  </bean>
+
+  <!--<bean id="viewResolver"-->
+  <!--class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+  <!--<property name="prefix">-->
+  <!--<value>/WEB-INF/views/</value>-->
+  <!--</property>-->
+  <!--<property name="suffix">-->
+  <!--<value>.jsp</value>-->
+  <!--</property>-->
+  <!--</bean>-->
+
 </beans>
 
 
